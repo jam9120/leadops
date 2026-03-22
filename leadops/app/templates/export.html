@@ -2,11 +2,12 @@
 {% block content %}
 <h1>Export leads</h1>
 
+{% if rows %}
 <form action="/export-form" method="post">
     <table>
         <thead>
             <tr>
-                <th>Select</th>
+                <th><input type="checkbox" id="select-all" onclick="document.querySelectorAll('input[name=lead_ids]').forEach(cb => cb.checked = this.checked)" /></th>
                 <th>Owner</th>
                 <th>Address</th>
                 <th>Trigger</th>
@@ -29,7 +30,12 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <button type="submit">Export selected CSV</button>
+    <div class="export-actions">
+        <button type="submit">Export selected CSV</button>
+        <span class="export-hint">Exports include contact info, score, tier, and suggested opener.</span>
+    </div>
 </form>
+{% else %}
+<p class="empty-state">No leads available. Run the pipeline first.</p>
+{% endif %}
 {% endblock %}

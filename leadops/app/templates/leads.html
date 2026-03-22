@@ -1,55 +1,70 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% macro sort_link(col, label) %}
+{% set next_order = "asc" if (sort_by == col and sort_order == "desc") else "desc" %}
+<a class="sort-link{% if sort_by == col %} sort-active{% endif %}"
+   href="/leads?tier={{ selected_tier }}&trigger_type={{ selected_trigger_type }}&sort_by={{ col }}&sort_order={{ next_order }}">
+  {{ label }}{% if sort_by == col %} {% if sort_order == "asc" %}↑{% else %}↓{% endif %}{% endif %}
+</a>
+{% endmacro %}
+
 <h1>Lead review</h1>
 
 <form method="get" action="/leads" class="filter-form">
-<label>
-Tier
-<select name="tier">
-<option value="">All</option>
-<option value="Tier 1" {% if selected_tier == "Tier 1" %}selected{% endif %}>Tier 1</option>
-<option value="Tier 2" {% if selected_tier == "Tier 2" %}selected{% endif %}>Tier 2</option>
-<option value="Tier 3" {% if selected_tier == "Tier 3" %}selected{% endif %}>Tier 3</option>
-</select>
-</label>
-
-<label>
-Trigger
-<select name="trigger_type">
-<option value="">All</option>
-{% for t in trigger_types %}
-<option value="{{ t }}" {% if selected_trigger_type == t %}selected{% endif %}>{{ t }}</option>
-{% endfor %}
-</select>
-</label>
-
-<button type="submit">Filter</button>
-
+    <input type="hidden" name="sort_by" value="{{ sort_by }}" />
+    <input type="hidden" name="sort_order" value="{{ sort_order }}" />
+    <label>
+        Tier
+        <select name="tier">
+            <option value="">All</option>
+            <option value="Tier 1" {% if selected_tier == "Tier 1" %}selected{% endif %}>Tier 1</option>
+            <option value="Tier 2" {% if selected_tier == "Tier 2" %}selected{% endif %}>Tier 2</option>
+            <option value="Tier 3" {% if selected_tier == "Tier 3" %}selected{% endif %}>Tier 3</option>
+        </select>
+    </label>
+    <label>
+        Trigger
+        <select name="trigger_type">
+            <option value="">All</option>
+            {% for t in trigger_types %}
+            <option value="{{ t }}" {% if selected_trigger_type == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <button type="submit">Filter</button>
+    {% if selected_tier or selected_trigger_type %}
+    <a href="/leads" class="clear-link">Clear</a>
+    {% endif %}
 </form>
 
+{% if rows %}
+<p class="row-count">{{ rows|length }} lead{% if rows|length != 1 %}s{% endif %}</p>
 <table>
-<thead>
-<tr>
-<th>Owner</th>
-<th>Address</th>
-<th>Trigger</th>
-<th>Score</th>
-<th>Tier</th>
-<th>Opener</th>
-</tr>
-</thead>
-<tbody>
-{% for row in rows %}
-<tr>
-<td>{{ row.owner_name }}</td>
-<td>{{ row.address_normalized }}</td>
-<td>{{ row.trigger_type }}</td>
-<td>{{ row.score }}</td>
-<td>{{ row.tier }}</td>
-<td>{{ row.suggested_opener }}</td>
-</tr>
-{% endfor %}
-</tbody>
+    <thead>
+        <tr>
+            <th>{{ sort_link("owner_name", "Owner") }}</th>
+            <th>Address</th>
+            <th>{{ sort_link("trigger_type", "Trigger") }}</th>
+            <th>{{ sort_link("score", "Score") }}</th>
+            <th>{{ sort_link("tier", "Tier") }}</th>
+            <th>Opener</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.owner_name }}</td>
+            <td>{{ row.address_normalized }}</td>
+            <td>{{ row.trigger_type }}</td>
+            <td>{{ row.score }}</td>
+            <td>{{ row.tier }}</td>
+            <td>{{ row.suggested_opener }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
+{% else %}
+<p class="empty-state">No leads found. {% if selected_tier or selected_trigger_type %}Try clearing the filters.{% else %}Run the pipeline first.{% endif %}</p>
+{% endif %}
 {% endblock %}

@@ -9,7 +9,14 @@
 {% endif %}
 
 <section>
-    <h2>Permits</h2>
+    <h2>Permits
+        {% if datasets.permits.loaded %}
+        <span class="badge badge-loaded">{{ datasets.permits.row_count }} rows loaded</span>
+        {% else %}
+        <span class="badge badge-missing">not loaded</span>
+        {% endif %}
+    </h2>
+    <p class="col-hint">Required columns: permit_id, address, owner_name, permit_type, permit_subtype, issue_date</p>
     <form action="/upload-form/permits" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept=".csv" required />
         <button type="submit">Upload permits.csv</button>
@@ -17,7 +24,14 @@
 </section>
 
 <section>
-    <h2>Property records</h2>
+    <h2>Property records
+        {% if datasets.property_records.loaded %}
+        <span class="badge badge-loaded">{{ datasets.property_records.row_count }} rows loaded</span>
+        {% else %}
+        <span class="badge badge-missing">not loaded</span>
+        {% endif %}
+    </h2>
+    <p class="col-hint">Required columns: property_id, address, owner_name, mailing_address, owner_occupied, trigger_label, trigger_date</p>
     <form action="/upload-form/property_records" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept=".csv" required />
         <button type="submit">Upload property_records.csv</button>
@@ -25,7 +39,14 @@
 </section>
 
 <section>
-    <h2>Enrichment</h2>
+    <h2>Enrichment
+        {% if datasets.enrichment.loaded %}
+        <span class="badge badge-loaded">{{ datasets.enrichment.row_count }} rows loaded</span>
+        {% else %}
+        <span class="badge badge-missing">not loaded</span>
+        {% endif %}
+    </h2>
+    <p class="col-hint">Required columns: address, owner_name, contact_email, contact_phone, contact_confidence</p>
     <form action="/upload-form/enrichment" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept=".csv" required />
         <button type="submit">Upload enrichment.csv</button>
