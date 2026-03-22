@@ -47,5 +47,16 @@ def load_scoring_config() -> dict[str, Any]:
             raise ValueError(f"scoring.yaml missing weights section: {key}")
         if config["weights"][key] is None:
             raise ValueError(f"scoring.yaml weights section '{key}' is empty/null")
+        if not isinstance(config["weights"][key], dict):
+            raise ValueError(f"scoring.yaml weights section '{key}' must be a mapping")
+
+    freshness_keys = list(config["weights"]["freshness_days"].keys())
+    non_string_keys = [k for k in freshness_keys if not isinstance(k, str)]
+    if non_string_keys:
+        raise ValueError(
+            f"scoring.yaml freshness_days keys must be quoted strings. "
+            f"Unquoted keys {non_string_keys!r} were parsed as {[type(k).__name__ for k in non_string_keys]}. "
+            f"Wrap them in double quotes: \"0_30\", \"31_90\", etc."
+        )
 
     return config

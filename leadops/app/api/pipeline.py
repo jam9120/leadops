@@ -1,3 +1,5 @@
+import urllib.parse
+
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 
@@ -17,5 +19,15 @@ def run_pipeline_api():
 
 @router.post("/run-pipeline-form")
 def run_pipeline_form():
-    run_pipeline_api()
-    return RedirectResponse(url="/run?status=ok", status_code=303)
+    try:
+        result = run_pipeline()
+        params = (
+            f"status=ok"
+            f"&normalized={result['normalized_count']}"
+            f"&snapshot={result['snapshot_count']}"
+            f"&current={result['current_count']}"
+        )
+        return RedirectResponse(url=f"/run?{params}", status_code=303)
+    except Exception as e:
+        msg = urllib.parse.quote(str(e))
+        return RedirectResponse(url=f"/run?status=error&message={msg}", status_code=303)

@@ -1,0 +1,169 @@
+#1 — Stabilize Environment and Prove End-to-End Flow
+
+## Mission
+Get the existing leadops app into a fully working, validated v1 state without changing architecture or adding features.
+
+The codebase already has the correct structure and core behavior. This task is only to:
+- fix environment/runtime dependency issues
+- verify upload -> pipeline -> leads -> export flow
+- fix any blocking bugs uncovered during that verification
+- make tests pass cleanly
+- make the run instructions accurate
+
+## Hard constraints
+- Do not add features
+- Do not redesign UI
+- Do not change scoring logic or YAML weights unless required for a bug fix
+- Do not add auth, multi-tenancy, ML, streaming, or new architecture
+- Keep the current stack: FastAPI, DuckDB, Parquet, YAML, Jinja templates
+
+## Acceptance criteria
+Done means all of the following are true:
+
+1. The app starts successfully.
+2. All three sample CSVs ingest without error through the upload UI.
+3. Curated Parquet files are written to `data/curated/`.
+4. DuckDB tables are created and queryable.
+5. The pipeline runs successfully through `/run-pipeline-form`.
+6. `lead_score_snapshot.parquet` and `lead_current.parquet` are written.
+7. `lead_current` contains scored rows with:
+   - `score`
+   - `tier`
+   - `score_version`
+   - `generated_at`
+   - `suggested_opener`
+8. `/leads` renders rows correctly and tier filtering works.
+9. `/export` allows selecting leads and downloading a valid CSV.
+10. Exported CSV includes:
+   - `lead_id`
+   - `owner_name`
+   - `address_normalized`
+   - `contact_email`
+   - `contact_phone`
+   - `trigger_type`
+   - `score`
+   - `tier`
+   - `suggested_opener`
+   - `score_version`
+   - `generated_at`
+11. `pytest` passes with all current tests green.
+12. `README.md` contains accurate setup, sample-data, run, and test instructions that work as written.
+
+## Out of scope
+- New features
+- UI improvements beyond bug fixes
+- New integrations
+- Live external APIs
+- Any rewrite of the app structure
+
+## Execution steps
+
+### 1. Fix environment and dependencies
+- Verify `import pandas` works in the active Replit/Nix Python environment.
+- Verify `import pyarrow` works.
+- If needed, reinstall or adjust versions in `requirements.txt` so pandas and pyarrow work correctly with the current Python environment.
+- Confirm imports succeed before moving on.
+
+### 2. Verify ingestion end to end
+Using the existing sample files:
+- `data/samples/permits.csv`
+- `data/samples/property_records.csv`
+- `data/samples/enrichment.csv`
+
+Test upload through the existing upload flow for:
+- permits
+- property_records
+- enrichment
+
+Confirm:
+- uploads succeed
+- schema validation works
+- Parquet files appear in `data/curated/`
+- DuckDB tables are created
+
+Fix only blocking runtime bugs discovered here.
+
+### 3. Verify pipeline end to end
+Run the existing pipeline through the app flow.
+
+Confirm:
+- normalization completes
+- scoring completes
+- `lead_score_snapshot.parquet` is written
+- `lead_current.parquet` is written
+- `lead_current` contains rows with valid `score`, `tier`, `score_version`, and `generated_at`
+
+Also verify the sample data actually joins correctly between:
+- permit/property trigger rows
+- enrichment rows
+using normalized address and owner fields
+
+Fix only blocking runtime bugs discovered here.
+
+### 4. Verify lead review and export
+Confirm:
+- `/leads` renders scored rows
+- tier filter works
+- trigger filter works if already implemented
+- `/export` renders selectable rows
+- selecting leads and submitting export returns a valid downloadable CSV
+
+Fix only blocking template, routing, or form-handling bugs discovered here.
+
+### 5. Make tests pass
+Run the full test suite from repo root.
+
+Requirements:
+- all current tests pass
+- no collection errors
+- no import path problems
+- if a test is broken because of a real bug, fix the code or the test only as needed for correctness
+- do not weaken tests just to make them pass
+
+### 6. Fix documentation
+Update `README.md`, not `replit.md`.
+
+`README.md` must include accurate commands for:
+- creating/activating venv if needed
+- installing dependencies
+- loading sample data
+- running pipeline
+- starting server
+- running tests
+
+Verify those commands work exactly as written.
+
+## Deliverables
+When complete, report:
+
+1. files changed
+2. what was fixed
+3. exact commands used to validate the app
+4. final test result
+5. any remaining fragility or technical debt, if any
+
+## Relevant files
+- `requirements.txt`
+- `README.md`
+- `app/services/ingest_service.py`
+- `app/services/pipeline_service.py`
+- `app/services/export_service.py`
+- `app/api/ingest.py`
+- `app/api/pipeline.py`
+- `app/api/exports.py`
+- `app/core/normalize.py`
+- `app/core/scoring.py`
+- `app/core/config.py`
+- `app/templates/upload.html`
+- `app/templates/run.html`
+- `app/templates/leads.html`
+- `app/templates/export.html`
+- `tests/test_ingest_validation.py`
+- `tests/test_normalize.py`
+- `tests/test_scoring.py`
+- `tests/conftest.py`
+- `data/samples/permits.csv`
+- `data/samples/property_records.csv`
+- `data/samples/enrichment.csv`
+- `config/scoring.yaml`
+- `replit.md`

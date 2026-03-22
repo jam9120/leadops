@@ -1,20 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-
 <h1>Run pipeline</h1>
 
+{% if not has_curated %}
+<p class="banner banner-warn">No curated datasets found. Upload all three CSVs on the Upload page before running.</p>
+{% endif %}
+
 <form action="/run-pipeline-form" method="post">
-<button type="submit">Normalize + Score</button>
+    <button type="submit" {% if not has_curated %}disabled{% endif %}>Normalize + Score</button>
 </form>
 
-{% if summary %}
+{% if status == "ok" and pipeline_result %}
+<p class="banner banner-ok">
+    Pipeline complete — {{ pipeline_result.current }} leads scored
+    ({{ pipeline_result.normalized }} events normalized, {{ pipeline_result.snapshot }} snapshot rows).
+</p>
+{% elif status == "error" %}
+<p class="banner banner-error">Pipeline failed: {{ message }}</p>
+{% endif %}
 
+{% if summary %}
 <h2>Current lead summary</h2>
 <ul>
-<li>Total leads: {{ summary.lead_count }}</li>
-<li>Tier 1: {{ summary.tier_1_count }}</li>
-<li>Tier 2: {{ summary.tier_2_count }}</li>
-<li>Tier 3: {{ summary.tier_3_count }}</li>
+    <li>Total leads: {{ summary.lead_count }}</li>
+    <li>Tier 1: {{ summary.tier_1_count }}</li>
+    <li>Tier 2: {{ summary.tier_2_count }}</li>
+    <li>Tier 3: {{ summary.tier_3_count }}</li>
 </ul>
 {% endif %}
 {% endblock %}

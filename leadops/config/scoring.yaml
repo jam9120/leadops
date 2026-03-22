@@ -16,10 +16,10 @@ weights:
     unknown: 0
 
   freshness_days:
-    0_30: 20
-    31_90: 10
-    91_180: 5
-    181_plus: 0
+    "0_30": 20
+    "31_90": 10
+    "91_180": 5
+    "181_plus": 0
 
   contact_confidence:
     high: 20

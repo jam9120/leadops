@@ -66,3 +66,28 @@ select {
 .filter-form {
     margin-bottom: 16px;
 }
+
+.banner {
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    border-left: 4px solid;
+}
+
+.banner-ok {
+    background: #0d2b0d;
+    border-color: #3a3;
+    color: #7f7;
+}
+
+.banner-error {
+    background: #2b0d0d;
+    border-color: #a33;
+    color: #f77;
+}
+
+.banner-warn {
+    background: #2b220d;
+    border-color: #a83;
+    color: #fc7;
+}
