@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 from app.core.normalize import first_name_from_owner
@@ -10,7 +10,9 @@ def freshness_bucket(trigger_date: str) -> str:
     except ValueError:
         return "181_plus"
 
-    days = (datetime.utcnow() - dt).days
+    now_utc = datetime.now(UTC).replace(tzinfo=None)
+    days = (now_utc - dt).days
+
     if days <= 30:
         return "0_30"
     if days <= 90:
@@ -21,9 +23,11 @@ def freshness_bucket(trigger_date: str) -> str:
 
 
 def compute_score(row: dict[str, Any], config: dict[str, Any]) -> int:
-    weights = config["weights"]
-    score = 0
+    weights = config.get("weights")
+    if not isinstance(weights, dict):
+        raise ValueError("Invalid scoring config: 'weights' must be a dictionary")
 
+    score = 0
     score += weights["trigger_type"].get(row["trigger_type"], 0)
     score += weights["freshness_days"].get(freshness_bucket(row["trigger_date"]), 0)
     score += weights["contact_confidence"].get((row["contact_confidence"] or "low").lower(), 0)

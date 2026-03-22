@@ -1,59 +1,34 @@
-from datetime import datetime
-from pathlib import Path
-from typing import Sequence
+from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi.responses import RedirectResponse
 
-import pandas as pd
+from app.core.config import RAW_DIR
+from app.services.ingest_service import save_uploaded_csv
 
-from app.core.config import EXPORT_DIR
-from app.db.duckdb import get_connection
+router = APIRouter()
 
 
-def export_leads(lead_ids: Sequence[str]) -> Path:
-    if not lead_ids:
-        raise ValueError("No lead IDs provided for export")
+@router.post("/api/upload/{dataset_type}")
+async def upload_dataset(dataset_type: str, file: UploadFile = File(...)):
+    if dataset_type not in {"permits", "property_records", "enrichment"}:
+        raise HTTPException(status_code=400, detail="Invalid dataset type")
 
-    with get_connection() as conn:
-        placeholders = ", ".join(["?"] * len(lead_ids))
-        query = f"""
-            SELECT
-                lead_id,
-                owner_name,
-                address_normalized,
-                contact_email,
-                contact_phone,
-                trigger_type,
-                score,
-                tier,
-                suggested_opener,
-                score_version,
-                generated_at
-            FROM lead_current
-            WHERE lead_id IN ({placeholders})
-        """
-        df = conn.execute(query, list(lead_ids)).df()
+    target_path = RAW_DIR / f"uploaded_{dataset_type}.csv"
+    content = await file.read()
+    target_path.write_bytes(content)
 
-        if df.empty:
-            raise ValueError("No matching leads found for export")
+    try:
+        parquet_path = save_uploaded_csv(target_path, dataset_type)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
-        export_batch_id = datetime.utcnow().strftime("%Y%m%d%H%M%S")
-        export_path = EXPORT_DIR / f"export_batch_{export_batch_id}.csv"
-        df.to_csv(export_path, index=False)
+    return {
+        "status": "ok",
+        "dataset_type": dataset_type,
+        "parquet_path": str(parquet_path),
+    }
 
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS export_batch (
-                export_batch_id VARCHAR,
-                created_at VARCHAR,
-                lead_count INTEGER,
-                export_path VARCHAR
-            )
-            """
-        )
-        conn.execute(
-            """
-            INSERT INTO export_batch VALUES (?, ?, ?, ?)
-            """,
-            [export_batch_id, datetime.utcnow().isoformat(), len(df), str(export_path)],
-        )
 
-    return export_path
+@router.post("/upload-form/{dataset_type}")
+async def upload_dataset_form(dataset_type: str, file: UploadFile = File(...)):
+    await upload_dataset(dataset_type, file)
+    return RedirectResponse(url="/upload?status=ok", status_code=303)
