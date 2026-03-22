@@ -1,5 +1,10 @@
 from pathlib import Path
 import shutil
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from app.core.config import BASE_DIR, RAW_DIR, ensure_directories
 from app.services.ingest_service import save_uploaded_csv
