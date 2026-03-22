@@ -1,0 +1,78 @@
+Read and follow replit.md exactly.
+
+We are not building new features. We are locking down the current v1 and removing fragility.
+
+Mission:
+Harden the existing leadops app so the full operator workflow is stable, deterministic, and GitHub-ready.
+
+Current architecture must remain unchanged:
+- FastAPI
+- Jinja/server-rendered UI
+- DuckDB
+- Parquet
+- YAML scoring config
+- CSV export
+
+Do not add:
+- auth
+- CRM integrations
+- ML
+- scheduling
+- live external APIs
+- cloud vendor SDKs
+- new architecture
+- UI redesign
+
+Your task is only to harden and verify the current app.
+
+Acceptance criteria:
+1. App starts cleanly.
+2. Upload page works for permits, property_records, and enrichment.
+3. Sample CSVs ingest successfully.
+4. Curated parquet files are written correctly.
+5. DuckDB tables are created and queryable.
+6. Run page successfully triggers normalization + scoring.
+7. lead_score_snapshot and lead_current are written correctly.
+8. Leads page renders scored rows with valid:
+   - score
+   - tier
+   - score_version
+   - generated_at
+   - suggested_opener
+9. Export page allows selecting leads and downloading a valid CSV.
+10. All current tests pass.
+11. README instructions are accurate and work as written.
+12. Remove dead code and fragile code paths only if necessary.
+
+Specific tasks:
+1. Validate scoring.yaml on load with clear error messages.
+2. Fix any remaining runtime bugs in upload -> run -> leads -> export flow.
+3. Ensure route modules are clean and consistent.
+4. Ensure scripts work consistently from repo root.
+5. Remove any dead code or unnecessary abstractions.
+6. Keep the UI simple; only fix correctness issues.
+7. Verify all sample data joins correctly after normalization.
+8. Fix the datetime UTC deprecation warning cleanly if still present.
+9. Run full test suite and report actual results.
+10. Verify the exact manual flow:
+   - python scripts/load_sample_data.py
+   - python scripts/run_pipeline.py
+   - pytest -q
+   - uvicorn app.main:app --reload
+   - browser flow: /upload -> /run -> /leads -> /export
+
+Rules:
+- Do not silently change architecture.
+- Do not add new files unless absolutely necessary for correctness.
+- If you believe a new file is necessary, explain why first.
+- Do not weaken tests to make them pass.
+- Prefer the smallest possible code change that fixes the issue.
+- Stop after completing this hardening pass.
+
+When finished, report exactly:
+1. files changed
+2. what was fixed
+3. what was verified manually
+4. exact test results
+5. any remaining fragility
+6. what was intentionally not changed

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Sequence
 
@@ -35,7 +35,8 @@ def export_leads(lead_ids: Sequence[str]) -> Path:
         if df.empty:
             raise ValueError("No matching leads found for export")
 
-        export_batch_id = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+        now = datetime.now(UTC)
+        export_batch_id = now.strftime("%Y%m%d%H%M%S")
         export_path = EXPORT_DIR / f"export_batch_{export_batch_id}.csv"
         df.to_csv(export_path, index=False)
 
@@ -53,7 +54,7 @@ def export_leads(lead_ids: Sequence[str]) -> Path:
             """
             INSERT INTO export_batch VALUES (?, ?, ?, ?)
             """,
-            [export_batch_id, datetime.utcnow().isoformat(), len(df), str(export_path)],
+            [export_batch_id, now.isoformat(), len(df), str(export_path)],
         )
 
     return export_path

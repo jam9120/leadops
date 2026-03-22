@@ -1,5 +1,4 @@
-from datetime import datetime
-from pathlib import Path
+from datetime import UTC, datetime
 
 import pandas as pd
 
@@ -24,7 +23,7 @@ def _load_parquet(name: str) -> pd.DataFrame:
 def run_pipeline() -> dict[str, int]:
     config = load_scoring_config()
     score_version = config["score_version"]
-    generated_at = datetime.utcnow().isoformat()
+    generated_at = datetime.now(UTC).isoformat()
 
     permits = _load_parquet("permits")
     property_records = _load_parquet("property_records")
