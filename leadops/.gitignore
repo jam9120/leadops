@@ -1,0 +1,12 @@
+pycache/
+.pytest_cache/
+.venv/
+.env
+.pyc
+.duckdb
+data/raw/
+data/curated/
+data/exports/*
+!data/raw/.gitkeep
+!data/curated/.gitkeep
+!data/exports/.gitkeep

@@ -1,0 +1,4 @@
+permit_id,address,owner_name,permit_type,permit_subtype,issue_date
+P-1001,123 Main Street Oakland CA,Mark Johnson,Building,ADU,2026-02-18
+P-1002,450 Pine Avenue Alameda CA,Susan Carter,Building,Roof Replacement,2026-01-22
+P-1003,88 Lake Drive San Leandro CA,David Lee,Electrical,Panel Upgrade,2025-12-15

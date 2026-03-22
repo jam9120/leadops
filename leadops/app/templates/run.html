@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Run pipeline</h1>
+
+<form action="/run-pipeline-form" method="post">
+<button type="submit">Normalize + Score</button>
+</form>
+
+{% if summary %}
+
+<h2>Current lead summary</h2>
+<ul>
+<li>Total leads: {{ summary.lead_count }}</li>
+<li>Tier 1: {{ summary.tier_1_count }}</li>
+<li>Tier 2: {{ summary.tier_2_count }}</li>
+<li>Tier 3: {{ summary.tier_3_count }}</li>
+</ul>
+{% endif %}
+{% endblock %}

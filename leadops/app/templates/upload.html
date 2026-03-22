@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Upload datasets</h1>
+
+<section>
+    <h2>Permits</h2>
+    <form action="/upload-form/permits" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required />
+        <button type="submit">Upload permits.csv</button>
+    </form>
+</section>
+
+<section>
+    <h2>Property records</h2>
+    <form action="/upload-form/property_records" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required />
+        <button type="submit">Upload property_records.csv</button>
+    </form>
+</section>
+
+<section>
+    <h2>Enrichment</h2>
+    <form action="/upload-form/enrichment" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required />
+        <button type="submit">Upload enrichment.csv</button>
+    </form>
+</section>
+{% endblock %}
