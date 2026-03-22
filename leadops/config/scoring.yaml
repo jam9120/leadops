@@ -1,42 +1,42 @@
 score_version: "v1"
 
 tiers:
-tier_1_min: 80
-tier_2_min: 60
+  tier_1_min: 80
+  tier_2_min: 60
 
 weights:
-trigger_type:
-adu_permit: 35
-remodel_permit: 30
-roof_update: 18
-electrical_update: 15
-deed_change: 20
-lender_change: 20
-wildfire_adjacent: 25
-unknown: 0
+  trigger_type:
+    adu_permit: 35
+    remodel_permit: 30
+    roof_update: 18
+    electrical_update: 15
+    deed_change: 20
+    lender_change: 20
+    wildfire_adjacent: 25
+    unknown: 0
 
-freshness_days:
-0_30: 20
-31_90: 10
-91_180: 5
-181_plus: 0
+  freshness_days:
+    0_30: 20
+    31_90: 10
+    91_180: 5
+    181_plus: 0
 
-contact_confidence:
-high: 20
-medium: 10
-low: 0
+  contact_confidence:
+    high: 20
+    medium: 10
+    low: 0
 
-owner_occupancy_proxy:
-owner_occupied: 15
-absentee: -10
-unknown: 0
+  owner_occupancy_proxy:
+    owner_occupied: 15
+    absentee: -10
+    unknown: 0
 
 openers:
-adu_permit: "{first_name} — saw the ADU permit. That’s exactly when home insurance gets out of sync. I can quote it fast."
-remodel_permit: "{first_name} — saw the home update. That’s usually when insurance gets outdated. I can check it fast."
-roof_update: "{first_name} — saw the roof update. That’s when insurance often needs a quick rewrite. I can check it fast."
-electrical_update: "{first_name} — saw the electrical update. That’s often when home insurance needs a refresh. I can quote it fast."
-deed_change: "{first_name} — saw the property paperwork change. That’s when insurance often gets left behind. I can check it fast."
-lender_change: "{first_name} — saw the lender change. That’s exactly when insurance should be rechecked. I can quote it fast."
-wildfire_adjacent: "{first_name} — calling on your home insurance. We’re seeing big market changes in your area. I can check it fast."
-unknown: "{first_name} — calling on your insurance. This looks worth a fast check. I can quote it fast."
+  adu_permit: "{first_name} — saw the ADU permit. That’s exactly when home insurance gets out of sync. I can quote it fast."
+  remodel_permit: "{first_name} — saw the home update. That’s usually when insurance gets outdated. I can check it fast."
+  roof_update: "{first_name} — saw the roof update. That’s when insurance often needs a quick rewrite. I can check it fast."
+  electrical_update: "{first_name} — saw the electrical update. That’s often when home insurance needs a refresh. I can quote it fast."
+  deed_change: "{first_name} — saw the property paperwork change. That’s when insurance often gets left behind. I can check it fast."
+  lender_change: "{first_name} — saw the lender change. That’s exactly when insurance should be rechecked. I can quote it fast."
+  wildfire_adjacent: "{first_name} — calling on your home insurance. We’re seeing big market changes in your area. I can check it fast."
+  unknown: "{first_name} — calling on your insurance. This looks worth a fast check. I can quote it fast."
