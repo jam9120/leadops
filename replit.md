@@ -14,7 +14,7 @@ This is a batch pipeline and operator console, not a consumer-facing SaaS produc
 ## Required Stack
 - Python 3.11+
 - FastAPI backend
-- Simple frontend
+- Simple frontend with Jinja templates
 - DuckDB for analytics/querying
 - Parquet for persisted datasets
 - YAML for scoring/config
