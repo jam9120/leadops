@@ -74,9 +74,9 @@ def run_pipeline() -> dict[str, int]:
         how="left",
     )
 
-    merged["contact_confidence"] = merged["contact_confidence"].fillna("low")
-    merged["contact_email"] = merged["contact_email"].fillna("")
-    merged["contact_phone"] = merged["contact_phone"].fillna("")
+    merged["contact_email"] = merged["contact_email"].fillna("").astype(str)
+    merged["contact_phone"] = merged["contact_phone"].fillna("").astype(str)
+    merged["contact_confidence"] = merged["contact_confidence"].fillna("low").astype(str)
 
     merged["lead_id"] = merged.apply(
         lambda r: f"{r['source_type']}::{r['source_record_id']}::{r['address_normalized']}",

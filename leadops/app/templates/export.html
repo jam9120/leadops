@@ -2,6 +2,10 @@
 {% block content %}
 <h1>Export leads</h1>
 
+{% if status == "error" %}
+<p class="banner banner-error">Export failed: {{ message }}</p>
+{% endif %}
+
 {% if rows %}
 <form action="/export-form" method="post">
     <table>

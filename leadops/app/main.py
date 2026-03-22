@@ -168,7 +168,7 @@ def leads_page(
 
 
 @app.get("/export", response_class=HTMLResponse)
-def export_page(request: Request):
+def export_page(request: Request, status: str | None = None, message: str | None = None):
     rows = []
     try:
         with get_connection() as conn:
@@ -189,4 +189,7 @@ def export_page(request: Request):
     except Exception:
         rows = []
 
-    return templates.TemplateResponse("export.html", {"request": request, "rows": rows})
+    return templates.TemplateResponse(
+        "export.html",
+        {"request": request, "rows": rows, "status": status, "message": message},
+    )
